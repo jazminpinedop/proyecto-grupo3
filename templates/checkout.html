@@ -1,267 +1,169 @@
 {% extends "base.html" %}
-grey lighten-3
+{% load crispy_forms_tags %}
 
 {% block content %}
 
-<main class="mt-5 pt-4">
-  <div class="container wow fadeIn">
+  <main >
+    <div class="container wow fadeIn">
+      <h2 class="my-5 h2 text-center">Checkout form</h2>
+      <div class="row">
+        <div class="col-md-8 mb-4">
+          <div class="card">
+            <form method="POST" class="card-body">
+              {% csrf_token %}
 
-    <!-- Heading -->
-    <h2 class="my-5 h2 text-center">Formulario de confirmación</h2>
+              <h3>Shipping address</h3>
 
-    <!--Grid row-->
-    <div class="row">
+              <div class='hideable_shipping_form'>
 
-      <!--Grid column-->
-      <div class="col-md-8 mb-4">
+                <div class="md-form mb-5">
+                  <input type='text' placeholder='1234 Main St' id='shipping_address' name='shipping_address' class='form-control' />
+                  <label for="shipping_address" class="">Address</label>
+                </div>
 
-        <!--Card-->
-        <div class="card">
+                <div class="md-form mb-5">
+                  <input type='text' placeholder='Apartment or suite' id='shipping_address2' name='shipping_address2' class='form-control' />
+                  <label for="shipping_address2" class="">Address 2 (optional)</label>
+                </div>
 
-          <!--Card content-->
-          <form class="card-body">
+                <div class="row">
+                  <div class="col-lg-4 col-md-12 mb-4">
+                    <label for="country">Country</label>
+                    {{ form.shipping_country }}
+                    <div class="invalid-feedback">
+                      Please select a valid country.
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <label for="shipping_zip">Zip</label>
+                    <input type='text' placeholder='Zip code' id='shipping_zip' name='shipping_zip' class='form-control' />
+                    <div class="invalid-feedback">
+                      Zip code required.
+                    </div>
+                  </div>
+                </div>
 
-            <!--Grid row-->
-            <div class="row">
-
-              <!--Grid column-->
-              <div class="col-md-6 mb-2">
-
-                <!--firstName-->
-                <div class="md-form ">
-                  <input type="text" id="firstName" class="form-control">
-                  <label for="firstName" class="">Nombres</label>
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" name="same_billing_address" id="same_billing_address">
+                  <label class="custom-control-label" for="same_billing_address">Billing address is the same as my shipping address</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
+                  <label class="custom-control-label" for="set_default_shipping">Save as default shipping address</label>
                 </div>
 
               </div>
-              <!--Grid column-->
 
-              <!--Grid column-->
-              <div class="col-md-6 mb-2">
+              {% if default_shipping_address %}
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
+                <label class="custom-control-label" for="use_default_shipping">Use default shipping address: {{ default_shipping_address.street_address|truncatechars:10 }}</label>
+              </div>
+              {% endif %}
 
-                <!--lastName-->
-                <div class="md-form">
-                  <input type="text" id="lastName" class="form-control">
-                  <label for="lastName" class="">Apellidos</label>
+              <hr>
+
+              <h3>Billing address</h3>
+
+              <div class='hideable_billing_form'>
+                <div class="md-form mb-5">
+                  <input type='text' placeholder='1234 Main St' id='billing_address' name='billing_address' class='form-control' />
+                  <label for="billing_address" class="">Address</label>
+                </div>
+
+                <div class="md-form mb-5">
+                  <input type='text' placeholder='Apartment or suite' id='billing_address2' name='billing_address2' class='form-control' />
+                  <label for="billing_address2" class="">Address 2 (optional)</label>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-4 col-md-12 mb-4">
+                    <label for="country">Country</label>
+                    {{ form.billing_country }}
+                    <div class="invalid-feedback">
+                      Please select a valid country.
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-md-6 mb-4">
+                    <label for="billing_zip">Zip</label>
+                    <input type='text' placeholder='Zip code' id='billing_zip' name='billing_zip' class='form-control' />
+                    <div class="invalid-feedback">
+                      Zip code required.
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" name="set_default_billing" id="set_default_billing">
+                  <label class="custom-control-label" for="set_default_billing">Save as default billing address</label>
                 </div>
 
               </div>
-              <!--Grid column-->
 
-            </div>
-            <!--Grid row-->
-
-            <!--Username-->
-            <div class="md-form input-group pl-0 mb-5">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">@</span>
+              {% if default_billing_address %}
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="use_default_billing" id="use_default_billing">
+                <label class="custom-control-label" for="use_default_billing">Use default billing address: {{ default_billing_address.street_address|truncatechars:10 }}</label>
               </div>
-              <input type="text" class="form-control py-0" placeholder="Username" aria-describedby="basic-addon1">
-            </div>
+              {% endif %}
+              <hr>
 
-            <!--email-->
-            <div class="md-form mb-5">
-              <input type="text" id="email" class="form-control" placeholder="youremail@example.com">
-              <label for="email" class="">Email (opcional)</label>
-            </div>
+              <h3>Payment option</h3>
 
-            <!--address-->
-            <div class="md-form mb-5">
-              <input type="text" id="address" class="form-control" placeholder="1234 Main St">
-              <label for="address" class="">Dirección</label>
-            </div>
-
-            <!--address-2-->
-            <div class="md-form mb-5">
-              <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite">
-              <label for="address-2" class="">Dirección 2 (opcional)</label>
-            </div>
-
-            <!--Grid row-->
-            <div class="row">
-
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-12 mb-4">
-
-                <label for="country">País</label>
-                <select class="custom-select d-block w-100" id="country" required>
-                  <option value="">Elegir...</option>
-                  <option>Perú</option>
-                </select>
-                <div class="invalid-feedback">
-                  Por favor selecciona un país válido.
+              <div class="d-block my-3">
+                {% for value, name in form.fields.payment_option.choices %}
+                <div class="custom-control custom-radio">
+                  <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio" class="custom-control-input" required>
+                  <label class="custom-control-label" for="{{ name }}">{{ name }}</label>
                 </div>
-
+                {% endfor %}
               </div>
-              <!--Grid column-->
 
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-4">
+              <hr class="mb-4">
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
 
-                <label for="state">Departamento</label>
-                <select class="custom-select d-block w-100" id="state" required>
-                  <option value="">Elegir</option>
-                  <option>Lima</option>
-                </select>
-                <div class="invalid-feedback">
-                  Por favor, seleccione un departamento válido
-                </div>
+            </form>
 
-              </div>
-              <!--Grid column-->
-
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-4">
-
-                <label for="zip">Código postal</label>
-                <input type="text" class="form-control" id="zip" placeholder="" required>
-                <div class="invalid-feedback">
-                  Código postal requerido.
-                </div>
-
-              </div>
-              <!--Grid column-->
-
-            </div>
-            <!--Grid row-->
-
-            <hr>
-
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="same-address">
-              <label class="custom-control-label" for="same-address">La dirección de envío es la misma que mi dirección
-                de facturación</label>
-            </div>
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="save-info">
-              <label class="custom-control-label" for="save-info">Guarde esta información para la próxima vez</label>
-            </div>
-
-            <hr>
-
-            <div class="d-block my-3">
-              <div class="custom-control custom-radio">
-                <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-                <label class="custom-control-label" for="credit">Tarjeta de crédito</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-                <label class="custom-control-label" for="debit">Tarjeta de débito</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-                <label class="custom-control-label" for="paypal">Paypal</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="cc-name">Nombre en la tarjeta</label>
-                <input type="text" class="form-control" id="cc-name" placeholder="" required>
-                <small class="text-muted">Nombre completo como se muestra en la tarjeta</small>
-                <div class="invalid-feedback">
-                  Se requiere el nombre en la tarjeta
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="cc-number">Número de tarjeta de crédito</label>
-                <input type="text" class="form-control" id="cc-number" placeholder="" required>
-                <div class="invalid-feedback">
-                  Se requiere el número de tarjeta de crédito
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-3 mb-3">
-                <label for="cc-expiration">Vencimiento</label>
-                <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-                <div class="invalid-feedback">
-                  Fecha de vencimiento requerida
-                </div>
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="cc-expiration">CVV</label>
-                <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-                <div class="invalid-feedback">
-                  Código de seguridad requerido
-                </div>
-              </div>
-            </div>
-            <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Continuar a la comprobación</button>
-
-          </form>
+          </div>
 
         </div>
-        <!--/.Card-->
+
+        <div class="col-md-4 mb-4">
+          {% include "order_snippet.html" %}
+        </div>
 
       </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-md-4 mb-4">
-
-        <!-- Heading -->
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted">Tu carrito</span>
-          <span class="badge badge-secondary badge-pill">3</span>
-        </h4>
-
-        <!-- Cart -->
-        <ul class="list-group mb-3 z-depth-1">
-          <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <div>
-              <h6 class="my-0">Nombre del producto</h6>
-              <small class="text-muted">Breve descripción</small>
-            </div>
-            <span class="text-muted">$12</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <div>
-              <h6 class="my-0">Segundo producto</h6>
-              <small class="text-muted">Breve descripción</small>
-            </div>
-            <span class="text-muted">$8</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <div>
-              <h6 class="my-0">Tercer producto</h6>
-              <small class="text-muted">Breve descripción</small>
-            </div>
-            <span class="text-muted">$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
-              <h6 class="my-0">Código promocional</h6>
-              <small>CODIGO</small>
-            </div>
-            <span class="text-success">-$5</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Total (USD)</span>
-            <strong>$20</strong>
-          </li>
-        </ul>
-        <!-- Cart -->
-
-        <!-- Promo code -->
-        <form class="card p-2">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username"
-              aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <button class="btn btn-secondary btn-md waves-effect m-0" type="button">Redeem</button>
-            </div>
-          </div>
-        </form>
-        <!-- Promo code -->
-
-      </div>
-      <!--Grid column-->
 
     </div>
-    <!--Grid row-->
-
-  </div>
-</main>
+  </main>
 
 {% endblock content %}
+
+{% block extra_scripts %}
+<script>
+var hideable_shipping_form = $('.hideable_shipping_form');
+var hideable_billing_form = $('.hideable_billing_form');
+
+var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
+var use_default_billing = document.querySelector("input[name=use_default_billing]");
+
+use_default_shipping.addEventListener('change', function() {
+  if (this.checked) {
+    hideable_shipping_form.hide();
+  } else {
+    hideable_shipping_form.show();
+  }
+})
+
+use_default_billing.addEventListener('change', function() {
+  if (this.checked) {
+    hideable_billing_form.hide();
+  } else {
+    hideable_billing_form.show();
+  }
+})
+
+</script>
+{% endblock extra_scripts %}

@@ -1,4 +1,4 @@
-#!c:\users\jotfe\desktop\firebase\linio\venv\scripts\python.exe
+#!c:\users\jotfe\desktop\firebase\django-ecommerce-master\venv\scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":

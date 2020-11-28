@@ -1,5 +1,5 @@
 @echo off
-set "VIRTUAL_ENV=C:\Users\JotFe\Desktop\firebase\linio\venv"
+set "VIRTUAL_ENV=C:\Users\JotFe\Desktop\firebase\django-ecommerce-master\venv"
 
 if not defined PROMPT (
     set "PROMPT=$P$G"
