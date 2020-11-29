@@ -25,7 +25,7 @@
                         <td>
                             <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}"><i
                                     class="fas fa-minus mr-2"></i></a>
-                            {{ order_item.quantity }}
+                            {{ order_item.cantidad }}
                             <a href="{% url 'core:add-to-cart' order_item.item.slug %}"><i
                                     class="fas fa-plus ml-2"></i></a>
                         </td>
@@ -54,7 +54,7 @@
                     {% if object.coupon %}
                     <tr>
                         <td colspan="4"><b>Cupón</b></td>
-                        <td><b>-${{ object.coupon.amount }}</b></td>
+                        <td><b>-${{ object.coupon.monto }}</b></td>
                     </tr>
                     {% endif %}
                     {% if object.get_total %}

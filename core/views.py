@@ -51,7 +51,7 @@ class CheckoutView(View):
 
             direccion_de_envio_qs = Address.objects.filter(
                 user=self.request.user,
-                address_type='S',
+                tipo_de_direccion='S',
                 default=True
             )
             if direccion_de_envio_qs.exists():
@@ -60,7 +60,7 @@ class CheckoutView(View):
 
             direccion_de_facturacion_qs = Address.objects.filter(
                 user=self.request.user,
-                address_type='B',
+                tipo_de_direccion='B',
                 default=True
             )
             if direccion_de_facturacion_qs.exists():
@@ -83,7 +83,7 @@ class CheckoutView(View):
                     print("Using the defualt shipping address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
-                        address_type='S',
+                        tipo_de_direccion='S',
                         default=True
                     )
                     if address_qs.exists():
@@ -107,11 +107,11 @@ class CheckoutView(View):
                     if is_valid_form([direccion_de_envio1, shipping_country, shipping_zip]):
                         direccion_de_envio = Address(
                             user=self.request.user,
-                            street_address=direccion_de_envio1,
-                            apartment_address=direccion_de_envio2,
-                            country=shipping_country,
+                            direccion=direccion_de_envio1,
+                            direccion2=direccion_de_envio2,
+                            pais=shipping_country,
                             zip=shipping_zip,
-                            address_type='S'
+                            tipo_de_direccion='S'
                         )
                         direccion_de_envio.save()
 
@@ -137,7 +137,7 @@ class CheckoutView(View):
                     direccion_de_facturacion = direccion_de_envio
                     direccion_de_facturacion.pk = None
                     direccion_de_facturacion.save()
-                    direccion_de_facturacion.address_type = 'B'
+                    direccion_de_facturacion.tipo_de_direccion = 'B'
                     direccion_de_facturacion.save()
                     order.direccion_de_facturacion = direccion_de_facturacion
                     order.save()
@@ -146,7 +146,7 @@ class CheckoutView(View):
                     print("Using the defualt billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
-                        address_type='B',
+                        tipo_de_direccion='B',
                         default=True
                     )
                     if address_qs.exists():
@@ -170,11 +170,11 @@ class CheckoutView(View):
                     if is_valid_form([direccion_de_facturacion1, billing_country, billing_zip]):
                         direccion_de_facturacion = Address(
                             user=self.request.user,
-                            street_address=direccion_de_facturacion1,
-                            apartment_address=direccion_de_facturacion2,
-                            country=billing_country,
+                            direccion=direccion_de_facturacion1,
+                            direccion2=direccion_de_facturacion2,
+                            pais=billing_country,
                             zip=billing_zip,
-                            address_type='B'
+                            tipo_de_direccion='B'
                         )
                         direccion_de_facturacion.save()
 
@@ -216,7 +216,7 @@ class PaymentView(View):
                 'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
             }
             userprofile = self.request.user.userprofile
-            if userprofile.one_click_purchasing:
+            if userprofile.compra_habilitada:
                 # fetch the users card list
                 cards = stripe.Customer.list_sources(
                     userprofile.stripe_customer_id,
@@ -256,34 +256,34 @@ class PaymentView(View):
                     )
                     customer.sources.create(source=token)
                     userprofile.stripe_customer_id = customer['id']
-                    userprofile.one_click_purchasing = True
+                    userprofile.compra_habilitada = True
                     userprofile.save()
 
-            amount = int(order.get_total() * 100)
+            monto = int(order.get_total() * 100)
 
             try:
 
                 if use_default or save:
                     # charge the customer because we cannot charge the token more than once
                     charge = stripe.Charge.create(
-                        amount=amount,  # cents
+                        monto=monto,  # cents
                         currency="usd",
                         customer=userprofile.stripe_customer_id
                     )
                 else:
                     # charge once off on the token
                     charge = stripe.Charge.create(
-                        amount=amount,  # cents
+                        monto=monto,  # cents
                         currency="usd",
                         source=token
                     )
 
-                # create the payment
-                payment = Payment()
-                payment.stripe_charge_id = charge['id']
-                payment.user = self.request.user
-                payment.amount = order.get_total()
-                payment.save()
+                # create the pago
+                pago = Payment()
+                pago.pago_id = charge['id']
+                pago.user = self.request.user
+                pago.monto = order.get_total()
+                pago.save()
 
                 # assign the payment to the order
 
@@ -293,7 +293,7 @@ class PaymentView(View):
                     item.save()
 
                 order.realizo_pedido = True
-                order.payment = payment
+                order.pago = pago
                 order.pedidoid = create_ref_code()
                 order.save()
 
@@ -382,7 +382,7 @@ def add_to_cart(request, slug):
         order = order_qs[0]
         # check if the order item is in the order
         if order.productos.filter(item__slug=item.slug).exists():
-            order_item.quantity += 1
+            order_item.cantidad += 1
             order_item.save()
             messages.info(request, "This item quantity was updated.")
             return redirect("core:order-summary")
@@ -443,8 +443,8 @@ def remove_single_item_from_cart(request, slug):
                 user=request.user,
                 realizo_pedido=False
             )[0]
-            if order_item.quantity > 1:
-                order_item.quantity -= 1
+            if order_item.cantidad > 1:
+                order_item.cantidad -= 1
                 order_item.save()
             else:
                 order.productos.remove(order_item)

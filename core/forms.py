@@ -12,7 +12,7 @@ PAYMENT_CHOICES = (
 class CheckoutForm(forms.Form):
     direccion_de_envio = forms.CharField(required=False)
     direccion_de_envio2 = forms.CharField(required=False)
-    shipping_country = CountryField(blank_label='(select country)').formfield(
+    shipping_country = CountryField(blank_label='(Selecione su pais)').formfield(
         required=False,
         widget=CountrySelectWidget(attrs={
             'class': 'custom-select d-block w-100',
@@ -21,7 +21,7 @@ class CheckoutForm(forms.Form):
 
     direccion_de_facturacion = forms.CharField(required=False)
     direccion_de_facturacion2 = forms.CharField(required=False)
-    billing_country = CountryField(blank_label='(select country)').formfield(
+    billing_country = CountryField(blank_label='(Selecione su pais)').formfield(
         required=False,
         widget=CountrySelectWidget(attrs={
             'class': 'custom-select d-block w-100',

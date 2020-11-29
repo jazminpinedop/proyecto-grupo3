@@ -27,8 +27,11 @@ ADDRESS_CHOICES = (
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+                  #username, first_name, last_name, email, password entre otros
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
-    one_click_purchasing = models.BooleanField(default=False)
+    compra_habilitada = models.BooleanField(default=False)
+    telefono = models.IntegerField(max_length=9)
+    dni = models.IntegerField(max_length=8)
 
     def __str__(self):
         return self.user.username
@@ -68,16 +71,16 @@ class OrderItem(models.Model):
                              on_delete=models.CASCADE)
     realizo_pedido = models.BooleanField(default=False)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
+    cantidad = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.quantity} of {self.item.nombre}"
+        return f"{self.cantidad} of {self.item.nombre}"
 
     def get_total_item_price(self):
-        return self.quantity * self.item.precio
+        return self.cantidad * self.item.precio
 
     def get_total_discount_item_price(self):
-        return self.quantity * self.item.precio_con_descuento
+        return self.cantidad * self.item.precio_con_descuento
 
     def get_amount_saved(self):
         return self.get_total_item_price() - self.get_total_discount_item_price()
@@ -93,14 +96,13 @@ class Order(models.Model):
                              on_delete=models.CASCADE)
     pedidoid = models.CharField(max_length=20, blank=True, null=True)
     productos = models.ManyToManyField(OrderItem)
-    start_date = models.DateTimeField(auto_now_add=True)
     fecha_de_pedido = models.DateTimeField()
     realizo_pedido = models.BooleanField(default=False)
     direccion_de_envio = models.ForeignKey(
         'Address', related_name='direccion_de_envio', on_delete=models.SET_NULL, blank=True, null=True)
     direccion_de_facturacion = models.ForeignKey(
         'Address', related_name='direccion_de_facturacion', on_delete=models.SET_NULL, blank=True, null=True)
-    payment = models.ForeignKey(
+    pago = models.ForeignKey(
         'Payment', on_delete=models.SET_NULL, blank=True, null=True)
     coupon = models.ForeignKey(
         'Coupon', on_delete=models.SET_NULL, blank=True, null=True)
@@ -128,33 +130,33 @@ class Order(models.Model):
         for order_item in self.productos.all():
             total += order_item.get_final_price()
         if self.coupon:
-            total -= self.coupon.amount
+            total -= self.coupon.monto
         return total
 
 
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    street_address = models.CharField(max_length=100)
-    apartment_address = models.CharField(max_length=100)
-    country = CountryField(multiple=False)
+    direccion = models.CharField(max_length=100)
+    direccion2 = models.CharField(max_length=100)
+    pais = CountryField(multiple=False)
     zip = models.CharField(max_length=100)
-    address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
+    tipo_de_direccion = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
     default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
 
     class Meta:
-        verbose_name_plural = 'Addresses'
+        verbose_name_plural = 'Direcciones'
 
 
 class Payment(models.Model):
-    stripe_charge_id = models.CharField(max_length=50)
+    pago_id = models.CharField(max_length=50)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.SET_NULL, blank=True, null=True)
-    amount = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    monto = models.FloatField()
+    fecha_y_hora= models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
@@ -162,7 +164,7 @@ class Payment(models.Model):
 
 class Coupon(models.Model):
     code = models.CharField(max_length=15)
-    amount = models.FloatField()
+    monto = models.FloatField()
 
     def __str__(self):
         return self.code

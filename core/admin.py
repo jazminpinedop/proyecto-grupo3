@@ -19,14 +19,14 @@ class OrderAdmin(admin.ModelAdmin):
                     'reembolsado',
                     'direccion_de_envio',
                     'direccion_de_facturacion',
-                    'payment',
+                    'pago',
                     'coupon'
                     ]
     list_display_links = [
         'user',
         'direccion_de_envio',
         'direccion_de_facturacion',
-        'payment',
+        'pago',
         'coupon'
     ]
     list_filter = ['realizo_pedido',
@@ -44,15 +44,15 @@ class OrderAdmin(admin.ModelAdmin):
 class AddressAdmin(admin.ModelAdmin):
     list_display = [
         'user',
-        'street_address',
-        'apartment_address',
-        'country',
+        'direccion',
+        'direccion2',
+        'pais',
         'zip',
-        'address_type',
+        'tipo_de_direccion',
         'default'
     ]
-    list_filter = ['default', 'address_type', 'country']
-    search_fields = ['user', 'street_address', 'apartment_address', 'zip']
+    list_filter = ['default', 'tipo_de_direccion', 'pais']
+    search_fields = ['user', 'direccion', 'direccion2', 'zip']
 
 
 admin.site.register(Item)
