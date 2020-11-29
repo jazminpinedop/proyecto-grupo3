@@ -4,7 +4,7 @@ from .models import Item, OrderItem, Order, Payment, Coupon, Refund, Address, Us
 
 
 def make_refund_accepted(modeladmin, request, queryset):
-    queryset.update(refund_requested=False, refund_granted=True)
+    queryset.update(reembolso_requerido=False, reembolsado=True)
 
 
 make_refund_accepted.short_description = 'Update orders to refund granted'
@@ -12,31 +12,31 @@ make_refund_accepted.short_description = 'Update orders to refund granted'
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['user',
-                    'ordered',
-                    'being_delivered',
-                    'received',
-                    'refund_requested',
-                    'refund_granted',
-                    'shipping_address',
-                    'billing_address',
+                    'realizo_pedido',
+                    'delivery_en_proceso',
+                    'recibido',
+                    'reembolso_requerido',
+                    'reembolsado',
+                    'direccion_de_envio',
+                    'direccion_de_facturacion',
                     'payment',
                     'coupon'
                     ]
     list_display_links = [
         'user',
-        'shipping_address',
-        'billing_address',
+        'direccion_de_envio',
+        'direccion_de_facturacion',
         'payment',
         'coupon'
     ]
-    list_filter = ['ordered',
-                   'being_delivered',
-                   'received',
-                   'refund_requested',
-                   'refund_granted']
+    list_filter = ['realizo_pedido',
+                   'delivery_en_proceso',
+                   'recibido',
+                   'reembolso_requerido',
+                   'reembolsado']
     search_fields = [
         'user__username',
-        'ref_code'
+        'pedidoid'
     ]
     actions = [make_refund_accepted]
 

@@ -5,23 +5,23 @@
     <div class="container">
 
         <div class="table-responsive text-nowrap">
-            <h2>Order Summary</h2>
+            <h2>Resumen del pedido</h2>
             <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Item title</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Total Item Price</th>
+                        <th scope="col">Nombre del producto</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Total</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for order_item in object.items.all %}
+                    {% for order_item in object.productos.all %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ order_item.item.nombre }}</td>
-                        <td>{{ order_item.item.price }}</td>
+                        <td>{{ order_item.item.precio }}</td>
                         <td>
                             <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}"><i
                                     class="fas fa-minus mr-2"></i></a>
@@ -30,9 +30,9 @@
                                     class="fas fa-plus ml-2"></i></a>
                         </td>
                         <td>
-                            {% if order_item.item.discount_price %}
+                            {% if order_item.item.precio_con_descuento %}
                             ${{ order_item.get_total_discount_item_price }}
-                            <span class="badge badge-primary">Saving ${{ order_item.get_amount_saved }}</span>
+                            <span class="badge badge-primary">Ahorrando ${{ order_item.get_amount_saved }}</span>
                             {% else %}
                             ${{ order_item.get_total_item_price }}
                             {% endif %}
@@ -43,29 +43,29 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan='5'>Your cart is empty</td>
+                        <td colspan='5'>Tu carrito esta vacío</td>
                     </tr>
                     <tr>
                         <td colspan="5">
-                            <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
+                            <a class='btn btn-primary float-right' href='/'>Seguir comprando</a>
                         </td>
                     </tr>
                     {% endfor %}
                     {% if object.coupon %}
                     <tr>
-                        <td colspan="4"><b>Coupon</b></td>
+                        <td colspan="4"><b>Cupón</b></td>
                         <td><b>-${{ object.coupon.amount }}</b></td>
                     </tr>
                     {% endif %}
                     {% if object.get_total %}
                     <tr>
-                        <td colspan="4"><b>Order Total</b></td>
+                        <td colspan="4"><b>Total del pedido</b></td>
                         <td><b>${{ object.get_total }}</b></td>
                     </tr>
                     <tr>
                         <td colspan="5">
-                            <a class='btn btn-warning float-right ml-2' href='/checkout/'>Proceed to checkout</a>
-                            <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
+                            <a class='btn btn-warning float-right ml-2' href='/checkout/'>Pagar</a>
+                            <a class='btn btn-primary float-right' href='/'>Seguir comprando</a>
                         </td>
                     </tr>
                     {% endif %}

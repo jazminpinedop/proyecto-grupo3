@@ -10,8 +10,8 @@ PAYMENT_CHOICES = (
 
 
 class CheckoutForm(forms.Form):
-    shipping_address = forms.CharField(required=False)
-    shipping_address2 = forms.CharField(required=False)
+    direccion_de_envio = forms.CharField(required=False)
+    direccion_de_envio2 = forms.CharField(required=False)
     shipping_country = CountryField(blank_label='(select country)').formfield(
         required=False,
         widget=CountrySelectWidget(attrs={
@@ -19,8 +19,8 @@ class CheckoutForm(forms.Form):
         }))
     shipping_zip = forms.CharField(required=False)
 
-    billing_address = forms.CharField(required=False)
-    billing_address2 = forms.CharField(required=False)
+    direccion_de_facturacion = forms.CharField(required=False)
+    direccion_de_facturacion2 = forms.CharField(required=False)
     billing_country = CountryField(blank_label='(select country)').formfield(
         required=False,
         widget=CountrySelectWidget(attrs={
@@ -28,7 +28,7 @@ class CheckoutForm(forms.Form):
         }))
     billing_zip = forms.CharField(required=False)
 
-    same_billing_address = forms.BooleanField(required=False)
+    same_direccion_de_facturacion = forms.BooleanField(required=False)
     set_default_shipping = forms.BooleanField(required=False)
     use_default_shipping = forms.BooleanField(required=False)
     set_default_billing = forms.BooleanField(required=False)
@@ -48,7 +48,7 @@ class CouponForm(forms.Form):
 
 
 class RefundForm(forms.Form):
-    ref_code = forms.CharField()
+    pedidoid = forms.CharField()
     message = forms.CharField(widget=forms.Textarea(attrs={
         'rows': 4
     }))

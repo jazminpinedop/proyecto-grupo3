@@ -24,7 +24,7 @@ def create_ref_code():
 
 def products(request):
     context = {
-        'items': Item.objects.all()
+        'productos': Item.objects.all()
     }
     return render(request, "products.html", context)
 
@@ -40,7 +40,7 @@ def is_valid_form(values):
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            order = Order.objects.get(user=self.request.user, realizo_pedido=False)
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -49,23 +49,23 @@ class CheckoutView(View):
                 'DISPLAY_COUPON_FORM': True
             }
 
-            shipping_address_qs = Address.objects.filter(
+            direccion_de_envio_qs = Address.objects.filter(
                 user=self.request.user,
                 address_type='S',
                 default=True
             )
-            if shipping_address_qs.exists():
+            if direccion_de_envio_qs.exists():
                 context.update(
-                    {'default_shipping_address': shipping_address_qs[0]})
+                    {'default_direccion_de_envio': direccion_de_envio_qs[0]})
 
-            billing_address_qs = Address.objects.filter(
+            direccion_de_facturacion_qs = Address.objects.filter(
                 user=self.request.user,
                 address_type='B',
                 default=True
             )
-            if billing_address_qs.exists():
+            if direccion_de_facturacion_qs.exists():
                 context.update(
-                    {'default_billing_address': billing_address_qs[0]})
+                    {'default_direccion_de_facturacion': direccion_de_facturacion_qs[0]})
             return render(self.request, "checkout.html", context)
         except ObjectDoesNotExist:
             messages.info(self.request, "You do not have an active order")
@@ -74,7 +74,7 @@ class CheckoutView(View):
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            order = Order.objects.get(user=self.request.user, realizo_pedido=False)
             if form.is_valid():
 
                 use_default_shipping = form.cleaned_data.get(
@@ -87,8 +87,8 @@ class CheckoutView(View):
                         default=True
                     )
                     if address_qs.exists():
-                        shipping_address = address_qs[0]
-                        order.shipping_address = shipping_address
+                        direccion_de_envio = address_qs[0]
+                        order.direccion_de_envio = direccion_de_envio
                         order.save()
                     else:
                         messages.info(
@@ -96,33 +96,33 @@ class CheckoutView(View):
                         return redirect('core:checkout')
                 else:
                     print("User is entering a new shipping address")
-                    shipping_address1 = form.cleaned_data.get(
-                        'shipping_address')
-                    shipping_address2 = form.cleaned_data.get(
-                        'shipping_address2')
+                    direccion_de_envio1 = form.cleaned_data.get(
+                        'direccion_de_envio')
+                    direccion_de_envio2 = form.cleaned_data.get(
+                        'direccion_de_envio2')
                     shipping_country = form.cleaned_data.get(
                         'shipping_country')
                     shipping_zip = form.cleaned_data.get('shipping_zip')
 
-                    if is_valid_form([shipping_address1, shipping_country, shipping_zip]):
-                        shipping_address = Address(
+                    if is_valid_form([direccion_de_envio1, shipping_country, shipping_zip]):
+                        direccion_de_envio = Address(
                             user=self.request.user,
-                            street_address=shipping_address1,
-                            apartment_address=shipping_address2,
+                            street_address=direccion_de_envio1,
+                            apartment_address=direccion_de_envio2,
                             country=shipping_country,
                             zip=shipping_zip,
                             address_type='S'
                         )
-                        shipping_address.save()
+                        direccion_de_envio.save()
 
-                        order.shipping_address = shipping_address
+                        order.direccion_de_envio = direccion_de_envio
                         order.save()
 
                         set_default_shipping = form.cleaned_data.get(
                             'set_default_shipping')
                         if set_default_shipping:
-                            shipping_address.default = True
-                            shipping_address.save()
+                            direccion_de_envio.default = True
+                            direccion_de_envio.save()
 
                     else:
                         messages.info(
@@ -130,16 +130,16 @@ class CheckoutView(View):
 
                 use_default_billing = form.cleaned_data.get(
                     'use_default_billing')
-                same_billing_address = form.cleaned_data.get(
-                    'same_billing_address')
+                same_direccion_de_facturacion = form.cleaned_data.get(
+                    'same_direccion_de_facturacion')
 
-                if same_billing_address:
-                    billing_address = shipping_address
-                    billing_address.pk = None
-                    billing_address.save()
-                    billing_address.address_type = 'B'
-                    billing_address.save()
-                    order.billing_address = billing_address
+                if same_direccion_de_facturacion:
+                    direccion_de_facturacion = direccion_de_envio
+                    direccion_de_facturacion.pk = None
+                    direccion_de_facturacion.save()
+                    direccion_de_facturacion.address_type = 'B'
+                    direccion_de_facturacion.save()
+                    order.direccion_de_facturacion = direccion_de_facturacion
                     order.save()
 
                 elif use_default_billing:
@@ -150,8 +150,8 @@ class CheckoutView(View):
                         default=True
                     )
                     if address_qs.exists():
-                        billing_address = address_qs[0]
-                        order.billing_address = billing_address
+                        direccion_de_facturacion = address_qs[0]
+                        order.direccion_de_facturacion = direccion_de_facturacion
                         order.save()
                     else:
                         messages.info(
@@ -159,33 +159,33 @@ class CheckoutView(View):
                         return redirect('core:checkout')
                 else:
                     print("User is entering a new billing address")
-                    billing_address1 = form.cleaned_data.get(
-                        'billing_address')
-                    billing_address2 = form.cleaned_data.get(
-                        'billing_address2')
+                    direccion_de_facturacion1 = form.cleaned_data.get(
+                        'direccion_de_facturacion')
+                    direccion_de_facturacion2 = form.cleaned_data.get(
+                        'direccion_de_facturacion2')
                     billing_country = form.cleaned_data.get(
                         'billing_country')
                     billing_zip = form.cleaned_data.get('billing_zip')
 
-                    if is_valid_form([billing_address1, billing_country, billing_zip]):
-                        billing_address = Address(
+                    if is_valid_form([direccion_de_facturacion1, billing_country, billing_zip]):
+                        direccion_de_facturacion = Address(
                             user=self.request.user,
-                            street_address=billing_address1,
-                            apartment_address=billing_address2,
+                            street_address=direccion_de_facturacion1,
+                            apartment_address=direccion_de_facturacion2,
                             country=billing_country,
                             zip=billing_zip,
                             address_type='B'
                         )
-                        billing_address.save()
+                        direccion_de_facturacion.save()
 
-                        order.billing_address = billing_address
+                        order.direccion_de_facturacion = direccion_de_facturacion
                         order.save()
 
                         set_default_billing = form.cleaned_data.get(
                             'set_default_billing')
                         if set_default_billing:
-                            billing_address.default = True
-                            billing_address.save()
+                            direccion_de_facturacion.default = True
+                            direccion_de_facturacion.save()
 
                     else:
                         messages.info(
@@ -208,8 +208,8 @@ class CheckoutView(View):
 
 class PaymentView(View):
     def get(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
-        if order.billing_address:
+        order = Order.objects.get(user=self.request.user, realizo_pedido=False)
+        if order.direccion_de_facturacion:
             context = {
                 'order': order,
                 'DISPLAY_COUPON_FORM': False,
@@ -236,7 +236,7 @@ class PaymentView(View):
             return redirect("core:checkout")
 
     def post(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+        order = Order.objects.get(user=self.request.user, realizo_pedido=False)
         form = PaymentForm(self.request.POST)
         userprofile = UserProfile.objects.get(user=self.request.user)
         if form.is_valid():
@@ -287,14 +287,14 @@ class PaymentView(View):
 
                 # assign the payment to the order
 
-                order_items = order.items.all()
-                order_items.update(ordered=True)
+                order_items = order.productos.all()
+                order_items.update(realizo_pedido=True)
                 for item in order_items:
                     item.save()
 
-                order.ordered = True
+                order.realizo_pedido = True
                 order.payment = payment
-                order.ref_code = create_ref_code()
+                order.pedidoid = create_ref_code()
                 order.save()
 
                 messages.success(self.request, "Your order was successful!")
@@ -354,7 +354,7 @@ class HomeView(ListView):
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            order = Order.objects.get(user=self.request.user, realizo_pedido=False)
             context = {
                 'object': order
             }
@@ -375,26 +375,26 @@ def add_to_cart(request, slug):
     order_item, created = OrderItem.objects.get_or_create(
         item=item,
         user=request.user,
-        ordered=False
+        realizo_pedido=False
     )
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    order_qs = Order.objects.filter(user=request.user, realizo_pedido=False)
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
+        if order.productos.filter(item__slug=item.slug).exists():
             order_item.quantity += 1
             order_item.save()
             messages.info(request, "This item quantity was updated.")
             return redirect("core:order-summary")
         else:
-            order.items.add(order_item)
+            order.productos.add(order_item)
             messages.info(request, "This item was added to your cart.")
             return redirect("core:order-summary")
     else:
-        ordered_date = timezone.now()
+        fecha_de_pedido = timezone.now()
         order = Order.objects.create(
-            user=request.user, ordered_date=ordered_date)
-        order.items.add(order_item)
+            user=request.user, fecha_de_pedido=fecha_de_pedido)
+        order.productos.add(order_item)
         messages.info(request, "This item was added to your cart.")
         return redirect("core:order-summary")
 
@@ -404,26 +404,26 @@ def remove_from_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
     order_qs = Order.objects.filter(
         user=request.user,
-        ordered=False
+        realizo_pedido=False
     )
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
+        if order.productos.filter(item__slug=item.slug).exists():
             order_item = OrderItem.objects.filter(
                 item=item,
                 user=request.user,
-                ordered=False
+                realizo_pedido=False
             )[0]
-            order.items.remove(order_item)
+            order.productos.remove(order_item)
             order_item.delete()
-            messages.info(request, "This item was removed from your cart.")
+            messages.info(request, "Este artículo fue eliminado de su carrito.")
             return redirect("core:order-summary")
         else:
-            messages.info(request, "This item was not in your cart")
+            messages.info(request, "Este artículo no estaba en tu carrito")
             return redirect("core:product", slug=slug)
     else:
-        messages.info(request, "You do not have an active order")
+        messages.info(request, "No tienes un pedido activo")
         return redirect("core:product", slug=slug)
 
 
@@ -432,22 +432,22 @@ def remove_single_item_from_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
     order_qs = Order.objects.filter(
         user=request.user,
-        ordered=False
+        realizo_pedido=False
     )
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
+        if order.productos.filter(item__slug=item.slug).exists():
             order_item = OrderItem.objects.filter(
                 item=item,
                 user=request.user,
-                ordered=False
+                realizo_pedido=False
             )[0]
             if order_item.quantity > 1:
                 order_item.quantity -= 1
                 order_item.save()
             else:
-                order.items.remove(order_item)
+                order.productos.remove(order_item)
             messages.info(request, "This item quantity was updated.")
             return redirect("core:order-summary")
         else:
@@ -474,7 +474,7 @@ class AddCouponView(View):
             try:
                 code = form.cleaned_data.get('code')
                 order = Order.objects.get(
-                    user=self.request.user, ordered=False)
+                    user=self.request.user, realizo_pedido=False)
                 order.coupon = get_coupon(self.request, code)
                 order.save()
                 messages.success(self.request, "Successfully added coupon")
@@ -495,13 +495,13 @@ class RequestRefundView(View):
     def post(self, *args, **kwargs):
         form = RefundForm(self.request.POST)
         if form.is_valid():
-            ref_code = form.cleaned_data.get('ref_code')
+            pedidoid = form.cleaned_data.get('pedidoid')
             message = form.cleaned_data.get('message')
             email = form.cleaned_data.get('email')
             # edit the order
             try:
-                order = Order.objects.get(ref_code=ref_code)
-                order.refund_requested = True
+                order = Order.objects.get(pedidoid=pedidoid)
+                order.reembolso_requerido = True
                 order.save()
 
                 # store the refund
