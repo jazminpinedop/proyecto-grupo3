@@ -6,6 +6,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'linioexpress.settings.productio
 
 #application = get_wsgi_application()
 
-from dj_static import Cling
+from linioexpress.dj_static import Cling
 
 application = Cling(get_wsgi_application())
