@@ -30,12 +30,13 @@ class UserProfile(models.Model):
                   #username, first_name, last_name, email, password entre otros
     stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
     compra_habilitada = models.BooleanField(default=False)
-    telefono = models.IntegerField(max_length=9)
-    dni = models.IntegerField(max_length=8)
+    telefono = models.IntegerField(max_length=9,blank=True, null=True)
+    dni = models.IntegerField(max_length=8,blank=True, null=True)
 
     def __str__(self):
         return self.user.username
-
+    class Meta:
+        verbose_name_plural = 'Usuarios'
 
 class Item(models.Model):
     nombre = models.CharField(max_length=100)
@@ -65,6 +66,9 @@ class Item(models.Model):
             'slug': self.slug
         })
 
+    class Meta:
+        verbose_name_plural = 'Productos'
+
 
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -89,6 +93,9 @@ class OrderItem(models.Model):
         if self.item.precio_con_descuento:
             return self.get_total_discount_item_price()
         return self.get_total_item_price()
+
+    class Meta:
+        verbose_name_plural = 'Pedido_Productos'
 
 
 class Order(models.Model):
@@ -132,7 +139,9 @@ class Order(models.Model):
         if self.coupon:
             total -= self.coupon.monto
         return total
-
+    
+    class Meta:
+        verbose_name_plural = 'Pedidos'    
 
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -161,6 +170,9 @@ class Payment(models.Model):
     def __str__(self):
         return self.user.username
 
+    class Meta:
+        verbose_name_plural = 'Pagos'
+
 
 class Coupon(models.Model):
     code = models.CharField(max_length=15)
@@ -168,6 +180,9 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+    class Meta:
+        verbose_name_plural = 'Cupones'
 
 
 class Refund(models.Model):

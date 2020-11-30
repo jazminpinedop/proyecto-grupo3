@@ -46,84 +46,15 @@
                 </div>
               </div>
 
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="same_direccion_de_facturacion"
-                  id="same_direccion_de_facturacion">
-                <label class="custom-control-label" for="same_direccion_de_facturacion">La dirección de facturación es
-                  la misma que
-                  mi dirección de Envío</label>
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="set_default_shipping"
-                  id="set_default_shipping">
-                <label class="custom-control-label" for="set_default_shipping">Guardar como dirección de envío
-                  predeterminada</label>
-              </div>
+
 
             </div>
 
-            {% if default_direccion_de_envio %}
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
-              <label class="custom-control-label" for="use_default_shipping">Utilice la dirección de envío
-                predeterminada:
-                {{ default_direccion_de_envio.direccion|truncatechars:10 }}</label>
-            </div>
-            {% endif %}
+
 
             <hr>
 
-            <h3>Dirección de facturación</h3>
 
-            <div class='hideable_billing_form'>
-              <div class="md-form mb-5">
-                <input type='text' placeholder='Escriba su direccion' id='direccion_de_facturacion'
-                  name='direccion_de_facturacion' class='form-control' />
-                <label for="direccion_de_facturacion" class="">Direccion</label>
-              </div>
-
-              <div class="md-form mb-5">
-                <input type='text' placeholder='Escriba su direccion' id='direccion_de_facturacion2'
-                  name='direccion_de_facturacion2' class='form-control' />
-                <label for="direccion_de_facturacion2" class="">Direccion 2 (opcional)</label>
-              </div>
-
-              <div class="row">
-                <div class="col-lg-4 col-md-12 mb-4">
-                  <label for="pais">País</label>
-                  {{ form.billing_country }}
-                  <div class="invalid-feedback">
-                    Seleccione un país válido.
-                  </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 mb-4">
-                  <label for="billing_zip">Código postal</label>
-                  <input type='text' placeholder='Zip code' id='billing_zip' name='billing_zip' class='form-control' />
-                  <div class="invalid-feedback">
-                    Se requiere código postal.
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="set_default_billing" id="set_default_billing">
-                <label class="custom-control-label" for="set_default_billing">Guardar como dirección de facturación
-                  predeterminada</label>
-              </div>
-
-            </div>
-
-            {% if default_direccion_de_facturacion %}
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" name="use_default_billing" id="use_default_billing">
-              <label class="custom-control-label" for="use_default_billing">Utilice la dirección de facturación
-                predeterminada:
-                {{ default_direccion_de_facturacion.direccion|truncatechars:10 }}</label>
-            </div>
-            {% endif %}
-            <hr>
 
             <h3>Opcion de pago</h3>
 
