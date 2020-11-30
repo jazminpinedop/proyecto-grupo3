@@ -1,1 +1,1 @@
-web: gunicorn linioexpress.wsgi --log-file -
+web: gunicorn linioexpress.wsgi

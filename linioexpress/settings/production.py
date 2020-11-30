@@ -11,9 +11,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': { 
+        'ENGINE': 'django.db.backend.postgresql_psicopg2'
+        'NAME': 'depka57av35ksr'
+        'USER': 'eztrqipqsocmay'
+        'PASSWORD': 'eaf1f0343394522d8e6c665c7f2a1f087dbd1f5960ffd5a5730db884847d28a0'
+        'HOST': 'ec2-54-205-248-255.compute-1.amazonaws.com'
+        'PORT': '5432'
+    }
 }
 
 
