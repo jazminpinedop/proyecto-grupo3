@@ -1,7 +1,7 @@
 from .base import *
 import dj_database_url
 DEBUG = config('DEBUG', cast=bool)
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['grupo3linioexpress.herokuapp.com']
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
